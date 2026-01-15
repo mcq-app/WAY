@@ -1315,68 +1315,60 @@ updateColumn10Info();
     }
     
 function updateColumn10Info() {
-        if (currentSubject === '') {
-            const column10Info = document.getElementById('column10-info');
-            const column11Select = document.getElementById('column11-select');
-            column10Info.innerHTML = '<option value="" disabled selected>اختر الفصل</option>';
-            column11Select.innerHTML = '<option value="" disabled selected>اختر التصنيف</option>';
-            return;
+    const column10Info = document.getElementById('column10-info');
+    const column11Select = document.getElementById('column11-select');
+
+    // تهيئة القوائم
+    column10Info.innerHTML = '<option value="" disabled selected>اختر الفصل</option>';
+    column11Select.innerHTML = '<option value="" disabled selected>اختر التصنيف</option>';
+
+    if (!currentSubject) return;
+
+    // =============================
+    // العمود 10 (تصنيف رئيسي)
+    // =============================
+    const col10Set = new Set();
+    questionsData.forEach(q => {
+        if (q.subject === currentSubject && q.col10) {
+            col10Set.add(q.col10);
         }
+    });
 
-        column10Info.innerHTML = '';
-        // إضافة خيار "الكل" كخيار افتراضي
-        const allOpt = document.createElement("option");
-        allOpt.value = "الكل";
-        allOpt.textContent = "الكل";
-        allOpt.selected = true;
-        column10Info.appendChild(allOpt);
+    col10Set.forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = val;
+        column10Info.appendChild(opt);
+    });
 
-        const column11Select = document.getElementById('column11-select');
-        column11Select.innerHTML = '';
-        column11Select.style.display = 'inline-block';
+    // =============================
+    // العمود 11 تابع للعمود 10
+    // =============================
+    column10Info.onchange = function () {
+        const selectedCol10 = this.value;
 
-        // إضافة خيار "الكل" للعمود 11 أيضاً
-        const allOpt11 = document.createElement('option');
-        allOpt11.value = 'الكل';
-        allOpt11.textContent = 'الكل';
-        allOpt11.selected = true;
-        column11Select.appendChild(allOpt11);
+        column11Select.innerHTML =
+            '<option value="" disabled selected>اختر التصنيف</option>';
 
-        let col10Set = new Set();
-        let col11Set = new Set();
+        const col11Set = new Set();
         questionsData.forEach(q => {
-            if (q.subject === currentSubject) {
-                if (q.col10) col10Set.add(q.col10);
-                if (q.col11) col11Set.add(q.col11);
+            if (
+                q.subject === currentSubject &&
+                q.col10 === selectedCol10 &&
+                q.col11
+            ) {
+                col11Set.add(q.col11);
             }
         });
 
-        if (col10Set.size > 0) {
-            col10Set.forEach(val => {
-                const opt = document.createElement('option');
-                opt.value = val;
-                opt.textContent = val;
-                column10Info.appendChild(opt);
-            });
-        }
-
-        if (col11Set.size > 0) {
-            col11Set.forEach(val => {
-                const opt = document.createElement('option');
-                opt.value = val;
-                opt.textContent = val;
-                column11Select.appendChild(opt);
-            });
-        }
-
-        // عندما يغيّر المستخدم الفلتر، لا نغير محتوى الفلتر الآخر — كل فلتر مستقل
-        column10Info.onchange = function() {
-            // تترك هذه الدالة فارغة بقصد استقلالية الفلاتر
-        };
-        column11Select.onchange = function() {
-            // تترك هذه الدالة فارغة بقصد استقلالية الفلاتر
-        };
-    }
+        col11Set.forEach(val => {
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val;
+            column11Select.appendChild(opt);
+        });
+    };
+}
 
     subjectSelect.addEventListener('change', function() {
         currentSubject = this.value;
