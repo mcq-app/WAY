@@ -31,7 +31,7 @@ html, body, * {
 
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>WAY</title>
+<title>Deutsch mit Ibrahim</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
 const colorBtn = document.getElementById('colorBtn');
 const palette = document.getElementById('palette');
@@ -997,7 +997,7 @@ header, .start-btn, .nav-btn, .restart-btn, .bottom-back-btn {
 <audio id="click-audio" src="https://cdn.pixabay.com/audio/2022/11/16/audio_12bfa6f1e1.mp3"></audio>
 <div class="container">
 <header>
-<h1>WAY</h1>
+<h1>Deutsch mit Ibrahim</h1>
 <button class="color-btn" id="colorBtn"><i class="fa-solid fa-brush"></i></button>
 <div class="palette" id="palette">
 <div data-color="#008CBA" style="background:#008CBA"></div>
@@ -1013,28 +1013,28 @@ header, .start-btn, .nav-btn, .restart-btn, .bottom-back-btn {
 <i class="fas fa-spinner fa-spin"></i> جاري تحميل بيانات الاختبار...
 </div>
 <div class="subject-selection" id="subject-section" style="display: none;">
-<h2>اختر المادة:</h2>
+<h2>B1 Prüfung</h2>
 
 <div class="selection-container">
 
     <div class="select-wrapper">
-        <div class="select-label">المادة</div>
+        <div class="select-label">Modul</div>
         <select id="subject-select"></select>
     </div>
 
     <div class="select-wrapper">
-        <div class="select-label">الفصل</div>
+        <div class="select-label">Teil</div>
         <select id="column10-info"></select>
     </div>
 
     <div class="select-wrapper">
-        <div class="select-label">التصنيف</div>
+        <div class="select-label">Text</div>
         <select id="column11-select"></select>
     </div>
 
 </div>
 
-<button class="start-btn" id="start-btn">بدء الاختبار</button>
+<button class="start-btn" id="start-btn">Beginnen</button>
 
 
 </div>
@@ -1211,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         subjectSelect.innerHTML = ''; // إضافة خيار افتراضي لعدم الاختيار التلقائي
         const defaultOpt = document.createElement('option');
         defaultOpt.value = '';
-        defaultOpt.textContent = 'اختر المادة';
+        defaultOpt.textContent = 'Modul auswählen';
         defaultOpt.selected = true;
         defaultOpt.disabled = true;
         subjectSelect.appendChild(defaultOpt);
@@ -1231,8 +1231,8 @@ function updateColumn10Info() {
     const column11Select = document.getElementById('column11-select');
 
     // تهيئة القوائم
-    column10Info.innerHTML = '<option value="" disabled selected>اختر الفصل</option>';
-    column11Select.innerHTML = '<option value="" disabled selected>اختر التصنيف</option>';
+    column10Info.innerHTML = '<option value="" disabled selected>Teil auswählen</option>';
+    column11Select.innerHTML = '<option value="" disabled selected>Text auswählen</option>';
 
     if (!currentSubject) return;
 
