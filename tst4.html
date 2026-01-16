@@ -1299,7 +1299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         subjectSelect.innerHTML = ''; // إضافة خيار افتراضي لعدم الاختيار التلقائي
         const defaultOpt = document.createElement('option');
         defaultOpt.value = '';
-        defaultOpt.textContent = 'اختر المادة';
+        defaultOpt.textContent = 'Modul auswählen';
         defaultOpt.selected = true;
         defaultOpt.disabled = true;
         subjectSelect.appendChild(defaultOpt);
@@ -1319,8 +1319,8 @@ function updateColumn10Info() {
     const column11Select = document.getElementById('column11-select');
 
     // تهيئة القوائم
-    column10Info.innerHTML = '<option value="" disabled selected>اختر الفصل</option>';
-    column11Select.innerHTML = '<option value="" disabled selected>اختر التصنيف</option>';
+    column10Info.innerHTML = '<option value="" disabled selected>Teil auswählen</option>';
+    column11Select.innerHTML = '<option value="" disabled selected>Text auswählen</option>';
 
     if (!currentSubject) return;
 
