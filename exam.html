@@ -178,12 +178,12 @@ const total = questions.length;
 const current = index + 1;
 const percent = Math.round((current / total) * 100);
 
-questionCounter.innerText = `Vraag ${current} van ${total}`;
+questionCounter.innerText = `frage ${current} von ${total}`;
 progressPercent.innerText = `${percent}%`;
 progressBar.style.width = `${percent}%`;
 progressHandle.style.left = `calc(${percent}% - 8px)`;
 
-questionTitle.innerText = `Vraag ${current}`;
+questionTitle.innerText = `frage ${current}`;
 questionText.innerText = q.text;
 
 options.innerHTML = "";
