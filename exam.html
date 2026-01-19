@@ -74,20 +74,15 @@
 <span id="progressPercent">—</span>
 </div>
 
-<div id="progressWrapper"
-class="relative w-full bg-gray-200 rounded-full h-2 overflow-visible">
-
-<div id="progressBar"
-class="relative bg-blue-600 h-2 rounded-full transition-all duration-200"
-style="width: 0%;">
-
-<div id="progressHandle"
-class="absolute top-1/2 -translate-y-1/2
- w-4 h-4 bg-white border-2 border-blue-600
- rounded-full shadow cursor-grab z-10">
-</div>
-
-</div>
+<div id="progressWrapper" class="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+  <!-- الشريط الأساسي (الخلفية الرمادية) -->
+  <div class="absolute inset-0 rounded-full"></div>
+  
+  <!-- شريط التقدم المتحرك -->
+  <div id="progressBar" class="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-200" style="width: 0%;"></div>
+  
+  <!-- الدائرة المتحركة - مرتبطة بنهاية الشريط الأزرق -->
+  <div id="progressHandle" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-600 rounded-full shadow-lg cursor-grab z-10" style="left: -8px;"></div>
 </div>
 
 <p class="text-xs text-gray-400 mt-2 text-center">
@@ -222,13 +217,13 @@ const total = questions.length;
 const current = index + 1;
 const percent = Math.round((current / total) * 100);
 
-questionCounter.innerText = `frage ${current} von ${total}`;
+questionCounter.textContent = `Frage ${current} von ${total}`;
 progressPercent.innerText = `${percent}%`;
 progressBar.style.width = `${percent}%`;
 progressHandle.style.left = `calc(${percent}% - 8px)`;
 
-questionTitle.innerText = `frage ${current}`;
-questionText.innerText = q.text;
+  questionTitle.innerText = `Vraag ${current}`;
+  questionText.innerText = q.text;
 
 options.innerHTML = "";
 q.options.forEach((opt,i)=>{
