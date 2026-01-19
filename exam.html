@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Deutsch mit Ibrahim</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center px-4">
+
+<div class="w-full max-w-3xl">
+
+<!-- ===== HEADER ===== -->
+<div class="text-center mb-6">
+<h1 class="text-3xl font-extrabold text-blue-700">
+ Deutsch mit Ibrahim
+</h1>
+<p class="text-gray-600 mt-1 text-sm">
+ B1 prüfung
+</p>
+</div>
+
+<div class="bg-white rounded-xl shadow-lg p-6">
+
+<!-- ================= LOADING ================= -->
+<div id="loading" class="text-center py-20">
+<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+<p class="mt-4 text-gray-600">جاري التحميل...</p>
+</div>
+
+<!-- ================= CONTENT ================= -->
+<div id="examContent" class="hidden">
+
+<!-- Exam Info -->
+<div class="mb-6">
+<h2 class="text-xl font-semibold text-gray-800">Prüfung</h2>
+<p id="examInfo" class="text-sm text-gray-500 mt-1"></p>
+</div>
+
+<!-- Progress -->
+<div class="mb-6">
+<div class="flex justify-between text-xs text-gray-500 mb-1">
+<span id="questionCounter">—</span>
+<span id="progressPercent">—</span>
+</div>
+
+<div id="progressWrapper"
+class="relative w-full bg-gray-200 rounded-full h-2 overflow-visible">
+
+<div id="progressBar"
+class="relative bg-blue-600 h-2 rounded-full transition-all duration-200"
+style="width: 0%;">
+
+<div id="progressHandle"
+class="absolute top-1/2 -translate-y-1/2
+ w-4 h-4 bg-white border-2 border-blue-600
+ rounded-full shadow cursor-grab z-10">
+</div>
+
+</div>
+</div>
+
+<p class="text-xs text-gray-400 mt-2 text-center">
+ اسحب الدائرة للتنقل بين الاسئلة
+</p>
+</div>
+
+<!-- Question -->
+<div class="mb-6">
+<h3 id="questionTitle"
+class="text-lg font-semibold text-gray-700 mb-2"></h3>
+
+<p id="questionText"
+class="text-gray-800 leading-relaxed"></p>
+</div>
+
+<!-- Options -->
+<div id="options" class="space-y-3 mb-6"></div>
+
+<!-- Explanation -->
+<div id="explanationBox"
+class="hidden p-4 rounded-lg border border-blue-300
+bg-blue-50 text-blue-900 text-sm leading-relaxed mb-6">
+</div>
+
+<!-- Navigation -->
+<div class="flex justify-between items-center gap-2">
+
+<button id="prevBtn"
+class="px-4 py-2 rounded-lg bg-gray-200
+ text-gray-700 hover:bg-gray-300 transition">
+ ⬅️
+</button>
+
+<div class="flex gap-2">
+<button id="showAnswerBtn"
+class="w-9 h-9 flex items-center justify-center
+ rounded-full border border-blue-500
+ text-blue-600 hover:bg-blue-50 transition">
+ ✅
+</button>
+
+<button id="explainBtn"
+class="w-9 h-9 flex items-center justify-center
+ rounded-full border border-gray-400
+ text-gray-600 hover:bg-gray-100 transition">
+ ℹ
+</button>
+</div>
+
+<button id="nextBtn"
+class="px-4 py-2 rounded-lg bg-blue-600
+ text-white hover:bg-blue-700 transition">
+ ➡️
+</button>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ================= PARAMS ================= */
+const params = new URLSearchParams(location.search);
+const subjectId = params.get("subjectId");
+const teil = params.get("teil");
+const title = params.get("title");
+
+examInfo.innerText = `Module: ${subjectId} | Teil: ${teil} | Text: ${title}`;
+
+/* ================= FIREBASE ================= */
+const app = initializeApp({
+apiKey: "AIzaSyAXRcM3jlAEyMMCqqXcOALCzbXVFoiopzA",
+authDomain: "deutsch-mit-ibrahim-35ee6.firebaseapp.com",
+projectId: "deutsch-mit-ibrahim-35ee6",
+storageBucket: "deutsch-mit-ibrahim-35ee6.firebasestorage.app",
+messagingSenderId: "906444610272",
+appId: "1:906444610272:web:963fbc60739b0c80034e85",
+measurementId: "G-W8KZPKXV6T"
+});
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+/* ================= STATE ================= */
+let questions = [];
+let index = 0;
+
+/* ================= LOAD ================= */
+async function loadQuestions() {
+const ref = collection(
+db,"subjects",subjectId,"teils",teil,"titles",title,"questions"
+ );
+const snap = await getDocs(ref);
+
+questions = snap.docs.map(d => ({
+ ...d.data(),
+answer: typeof d.data().correctIndex === "number"
+ ? d.data().correctIndex : -1
+ }));
+
+renderQuestion();
+loading.classList.add("hidden");
+examContent.classList.remove("hidden");
+}
+
+/* ================= RENDER ================= */
+function renderQuestion() {
+explanationBox.classList.add("hidden");
+
+const q = questions[index];
+const total = questions.length;
+const current = index + 1;
+const percent = Math.round((current / total) * 100);
+
+questionCounter.innerText = `frage ${current} von ${total}`;
+progressPercent.innerText = `${percent}%`;
+progressBar.style.width = `${percent}%`;
+progressHandle.style.left = `calc(${percent}% - 8px)`;
+
+questionTitle.innerText = `frage ${current}`;
+questionText.innerText = q.text;
+
+options.innerHTML = "";
+q.options.forEach((opt,i)=>{
+const l=document.createElement("label");
+l.className="block border p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition";
+l.innerText=opt;
+l.onclick=()=>{
+options.querySelectorAll("label")
+ .forEach(x=>x.classList.add("opacity-50"));
+if(i===q.answer) l.classList.add("bg-green-100","border-green-500");
+else{
+l.classList.add("bg-red-100","border-red-500");
+options.children[q.answer]
+ .classList.add("bg-green-100","border-green-500");
+ }
+ };
+options.appendChild(l);
+ });
+}
+
+/* ================= NAV ================= */
+nextBtn.onclick=()=>{if(index<questions.length-1)index++,renderQuestion();}
+prevBtn.onclick=()=>{if(index>0)index--,renderQuestion();}
+
+/* ================= EXPLANATION ================= */
+explainBtn.onclick=()=>{
+explanationBox.innerText =
+questions[index].explanation || "Geen uitleg beschikbaar.";
+explanationBox.classList.toggle("hidden");
+};
+
+/* ================= DRAG ================= */
+let dragging=false;
+
+function seek(x){
+const r=progressWrapper.getBoundingClientRect();
+let ratio=(x-r.left)/r.width;
+ratio=Math.max(0,Math.min(1,ratio));
+index=Math.min(questions.length-1,Math.floor(ratio*questions.length));
+renderQuestion();
+}
+
+progressHandle.addEventListener("mousedown",e=>{
+dragging=true;
+progressHandle.classList.add("cursor-grabbing");
+e.preventDefault();
+});
+document.addEventListener("mousemove",e=>{
+if(dragging)seek(e.clientX);
+});
+document.addEventListener("mouseup",()=>{
+dragging=false;
+progressHandle.classList.remove("cursor-grabbing");
+});
+
+progressHandle.addEventListener("touchstart",()=>dragging=true);
+document.addEventListener("touchmove",e=>{
+if(dragging)seek(e.touches[0].clientX);
+});
+document.addEventListener("touchend",()=>dragging=false);
+
+/* ================= AUTH ================= */
+onAuthStateChanged(auth,user=>{
+if(user) loadQuestions();
+else location.href="index.html";
+});
+
+/* ================= SHOW ANSWER ================= */
+showAnswerBtn.onclick = () => {
+const q = questions[index];
+if (q.answer === -1) {
+alert("Er is geen oplossing voor deze vraag");
+return;
+ }
+document.querySelectorAll("#options label").forEach((l, i) => {
+l.classList.add("opacity-50");
+if (i === q.answer) {
+l.classList.add("bg-green-100", "border-green-500");
+ }
+ });
+};
+</script>
+
+</body>
+</html>
