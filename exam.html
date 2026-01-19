@@ -164,8 +164,6 @@ const title = params.get("title");
 // ================= EXAM INFO =================
 // تحديث معلومات الاختبار
 function updateExamInfo() {
-  // النص الرئيسي القديم (يمكن حذفه إذا أردت)
-  examInfo.innerText = `Module: ${subjectId} | Deel: ${teil} | Titel: ${title}`;
   
   // تحديث الباجات الجديدة
   document.getElementById('subjectBadge').textContent = subjectId;
