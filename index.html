@@ -149,6 +149,79 @@ startBtn.onclick = () => {
   window.location.href = `exam.html?${params.toString()}`;
 };
 </script>
+<!-- ===== Access Code Overlay ===== -->
+<div id="accessOverlay" style="
+position:fixed; inset:0; background:rgba(0,0,0,.6);
+display:flex; align-items:center; justify-content:center;
+z-index:99999;">
+
+  <div style="
+  background:white; padding:20px; border-radius:12px;
+  width:90%; max-width:360px; text-align:center;">
+
+    <h3 style="margin-bottom:12px; font-weight:bold;">
+      رمز التحقق
+    </h3>
+
+    <input id="accessCodeInput" type="password"
+    placeholder="ادخل رمز التحقق"
+    style="
+    width:100%; padding:10px; border:2px solid #ccc;
+    border-radius:8px; margin-bottom:12px;
+    outline:none;">
+
+    <button id="verifyAccessBtn"
+    style="
+    width:100%; padding:10px;
+    background:#2563eb; color:white;
+    border:none; border-radius:8px;
+    font-weight:bold; cursor:pointer;">
+      تحقق
+    </button>
+
+    <div id="accessError"
+    style="color:#b00020; margin-top:10px; font-size:14px;"></div>
+  </div>
+</div>
+<script>
+const ACCESS_KEY = "WAY_ACCESS_OK";
+const EXCEL_URL = "https://mcq-app.github.io/WAY/pass.xlsx";
+
+if (localStorage.getItem(ACCESS_KEY) === "true") {
+  document.getElementById("accessOverlay").style.display = "none";
+}
+
+document.getElementById("verifyAccessBtn").onclick = async () => {
+  const input = document.getElementById("accessCodeInput").value.trim();
+  const error = document.getElementById("accessError");
+  error.textContent = "";
+
+  if (!input) {
+    error.textContent = "الرجاء إدخال الرمز";
+    return;
+  }
+
+  try {
+    const res = await fetch(EXCEL_URL);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    const validCodes = rows.flat().map(v => String(v).trim());
+
+    if (validCodes.includes(input)) {
+      localStorage.setItem(ACCESS_KEY, "true");
+      document.getElementById("accessOverlay").style.display = "none";
+    } else {
+      error.textContent = "رمز غير صحيح";
+    }
+
+  } catch (e) {
+    error.textContent = "فشل تحميل ملف التحقق";
+  }
+};
+</script>
 
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center px-4">
 
