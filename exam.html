@@ -31,10 +31,40 @@
 <!-- ================= CONTENT ================= -->
 <div id="examContent" class="hidden">
 
-<!-- Exam Info -->
+<!-- ================= EXAM INFO ================= -->
 <div class="mb-6">
-<h2 class="text-xl font-semibold text-gray-800">Prüfung</h2>
-<p id="examInfo" class="text-sm text-gray-500 mt-1"></p>
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-sm">
+    
+    <!-- Main Exam Title -->
+    <div class="flex-1">
+      <h2 class="text-xl font-bold text-blue-800 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Prüfung
+      </h2>
+      <p id="examInfo" class="text-gray-700 font-medium mt-1"></p>
+    </div>
+    
+    <!-- Info Badges -->
+    <div class="flex flex-wrap gap-2">
+      <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
+        <div class="text-xs text-gray-500 font-medium">Module</div>
+        <div id="subjectBadge" class="text-sm font-semibold text-blue-700"></div>
+      </div>
+      
+      <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
+        <div class="text-xs text-gray-500 font-medium">Teil</div>
+        <div id="teilBadge" class="text-sm font-semibold text-blue-700"></div>
+      </div>
+      
+      <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
+        <div class="text-xs text-gray-500 font-medium">Titel</div>
+        <div id="titleBadge" class="text-sm font-semibold text-blue-700 truncate max-w-[120px]"></div>
+      </div>
+    </div>
+    
+  </div>
 </div>
 
 <!-- Progress -->
