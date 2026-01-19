@@ -259,6 +259,62 @@ class="bg-white p-6 rounded-xl shadow hidden">
   class="w-full border p-2 mb-4 rounded focus:outline-none focus:ring focus:ring-blue-200">
 
   <button id="loginBtn"
+    <hr class="my-4">
+<input id="accessCodeInput"
+type="password"
+placeholder="رمز التحقق"
+class="w-full border p-2 mb-2 rounded">
+
+<button id="verifyAccessBtn"
+class="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded transition">
+تحقق
+</button>
+
+<p id="accessError"
+class="text-sm text-red-600 mt-2 text-center"></p>
+    <script>
+const ACCESS_KEY = "WAY_ACCESS_OK";
+const EXCEL_URL = "https://mcq-app.github.io/WAY/pass.xlsx";
+
+function hideAccessUI(){
+  document.getElementById("accessCodeInput")?.classList.add("hidden");
+  document.getElementById("verifyAccessBtn")?.classList.add("hidden");
+}
+
+if (localStorage.getItem(ACCESS_KEY) === "true") {
+  hideAccessUI();
+}
+
+document.getElementById("verifyAccessBtn").onclick = async () => {
+  const input = document.getElementById("accessCodeInput").value.trim();
+  const error = document.getElementById("accessError");
+  error.textContent = "";
+
+  if (!input) {
+    error.textContent = "أدخل رمز التحقق";
+    return;
+  }
+
+  try {
+    const res = await fetch(EXCEL_URL);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    const validCodes = rows.flat().map(v => String(v).trim());
+
+    if (validCodes.includes(input)) {
+      localStorage.setItem(ACCESS_KEY, "true");
+      hideAccessUI();
+    } else {
+      error.textContent = "رمز غير صحيح";
+    }
+  } catch {
+    error.textContent = "خطأ في التحقق";
+  }
+};
+</script>
   class="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded mb-3 transition">
     Login
   </button>
@@ -296,5 +352,31 @@ class="bg-white p-6 rounded-xl shadow hidden">
 </div>
 
 </div>
+  <button id="excelLogoutBtn"
+style="
+position:fixed;
+bottom:20px;
+right:20px;
+z-index:99999;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:50%;
+width:52px;
+height:52px;
+font-size:20px;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(0,0,0,.3);
+">
+⎋
+</button>
+
+<script>
+document.getElementById("excelLogoutBtn").onclick = () => {
+  localStorage.removeItem("WAY_ACCESS_OK");
+  location.reload();
+};
+</script>
+
 </body>
 </html>
