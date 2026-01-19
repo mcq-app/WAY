@@ -374,6 +374,50 @@ document.getElementById("excelLogoutBtn").onclick = () => {
   location.reload();
 };
 </script>
+<!-- نافذة تأكيد تسجيل الخروج -->
+<div id="logoutConfirmModal" style="
+position:fixed; inset:0; background:rgba(0,0,0,.5);
+display:none; align-items:center; justify-content:center;
+z-index:100000;">
+  <div style="
+    background:white; padding:20px; border-radius:12px; width:90%; max-width:360px; text-align:center;">
+    <p style="margin-bottom:16px; font-weight:bold; font-size:16px;">
+      هل تريد تسجيل الخروج، سيتم حذف الكود الخاص بك
+    </p>
+    <div style="display:flex; gap:10px; justify-content:center;">
+      <button id="logoutCancelBtn" style="
+        flex:1; padding:10px; border-radius:8px; border:2px solid #2563eb;
+        background:white; color:#2563eb; font-weight:bold; cursor:pointer;">
+        عودة
+      </button>
+      <button id="logoutConfirmBtn" style="
+        flex:1; padding:10px; border-radius:8px; border:none;
+        background:#dc2626; color:white; font-weight:bold; cursor:pointer;">
+        تسجيل الخروج
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const logoutBtn = document.getElementById("excelLogoutBtn");
+const logoutModal = document.getElementById("logoutConfirmModal");
+const logoutCancel = document.getElementById("logoutCancelBtn");
+const logoutConfirm = document.getElementById("logoutConfirmBtn");
+
+logoutBtn.onclick = () => {
+  logoutModal.style.display = "flex";
+};
+
+logoutCancel.onclick = () => {
+  logoutModal.style.display = "none";
+};
+
+logoutConfirm.onclick = () => {
+  localStorage.removeItem("WAY_ACCESS_OK");
+  location.reload();
+};
+</script>
 
 </body>
 </html>
