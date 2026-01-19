@@ -161,8 +161,24 @@ const subjectId = params.get("subjectId");
 const teil = params.get("teil");
 const title = params.get("title");
 
-examInfo.innerText = `Module: ${subjectId} | Teil: ${teil} | Text: ${title}`;
+// ================= EXAM INFO =================
+// تحديث معلومات الاختبار
+function updateExamInfo() {
+  // النص الرئيسي القديم (يمكن حذفه إذا أردت)
+  examInfo.innerText = `Module: ${subjectId} | Deel: ${teil} | Titel: ${title}`;
+  
+  // تحديث الباجات الجديدة
+  document.getElementById('subjectBadge').textContent = subjectId;
+  document.getElementById('teilBadge').textContent = teil;
+  document.getElementById('titleBadge').textContent = title;
+  
+  // إضافة tooltip للنص الطويل
+  document.getElementById('titleBadge').title = title;
+}
 
+// استدعاء الدالة بعد تعيين القيم
+updateExamInfo();
+ 
 /* ================= FIREBASE ================= */
 const app = initializeApp({
 apiKey: "AIzaSyAXRcM3jlAEyMMCqqXcOALCzbXVFoiopzA",
