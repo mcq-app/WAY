@@ -60,7 +60,7 @@
       
       <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
         <div class="text-xs text-gray-500 font-medium">Text</div>
-        <div id="titleBadge" class="text-sm font-semibold text-blue-700 truncate max-w-[120px]"></div>
+        <div id="titleBadge"  class="text-sm font-semibold text-blue-700 break-words"></div>
       </div>
     </div>
     
@@ -148,7 +148,7 @@ class="px-4 py-2 rounded-lg bg-blue-600
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query,orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ================= PARAMS ================= */
 const params = new URLSearchParams(location.search);
@@ -192,21 +192,90 @@ let index = 0;
 
 /* ================= LOAD ================= */
 async function loadQuestions() {
-const ref = collection(
-db,"subjects",subjectId,"teils",teil,"titles",title,"questions"
- );
-const snap = await getDocs(ref);
+  questions = [];
 
-questions = snap.docs.map(d => ({
- ...d.data(),
-answer: typeof d.data().correctIndex === "number"
- ? d.data().correctIndex : -1
- }));
+  // ✅ إذا كان هناك title → حمّل أسئلته فقط
+  if (title) {
+    const ref = collection(
+      db,
+      "subjects",
+      subjectId,
+      "teils",
+      teil,
+      "titles",
+      title,
+      "questions"
+    );
 
-renderQuestion();
-loading.classList.add("hidden");
-examContent.classList.remove("hidden");
+    const q = query(ref, orderBy("order", "asc"));
+    const snap = await getDocs(q);
+
+    snap.forEach(d => {
+      questions.push({
+        ...d.data(),
+        answer:
+          typeof d.data().correctIndex === "number"
+            ? d.data().correctIndex
+            : -1
+      });
+    });
+
+  } 
+  // ✅ إذا لم يوجد title → حمّل كل الـ titles ثم كل الأسئلة
+  else {
+    const titlesRef = collection(
+      db,
+      "subjects",
+      subjectId,
+      "teils",
+      teil,
+      "titles"
+    );
+
+    const titlesSnap = await getDocs(titlesRef);
+
+    for (const titleDoc of titlesSnap.docs) {
+      const qRef = collection(
+        db,
+        "subjects",
+        subjectId,
+        "teils",
+        teil,
+        "titles",
+        titleDoc.id,
+        "questions"
+      );
+
+      const q = query(qRef, orderBy("order", "asc"));
+      const qSnap = await getDocs(q);
+
+      qSnap.forEach(d => {
+        questions.push({
+          ...d.data(),
+          answer:
+            typeof d.data().correctIndex === "number"
+              ? d.data().correctIndex
+              : -1
+        });
+      });
+    }
+  }
+
+  // حماية إضافية
+  if (!questions.length) {
+    alert("لا توجد أسئلة");
+    location.href = "index.html";
+    return;
+  }
+
+  questions.sort((a, b) => a.order - b.order);
+
+  renderQuestion();
+  loading.classList.add("hidden");
+  examContent.classList.remove("hidden");
 }
+
+
 
 /* ================= RENDER ================= */
 function renderQuestion() {

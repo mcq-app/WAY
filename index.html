@@ -135,16 +135,18 @@ teil.addEventListener("change", e => {
 });
 
 startBtn.onclick = () => {
-  if (!subject.value || !teil.value || !title.value) {
-    alert("Bitte wählen Sie Modul, Teil und Text aus");
+  if (!subject.value || !teil.value ) {
+    alert("Bitte wählen Sie Modul, Teil aus");
     return;
   }
 
   const params = new URLSearchParams({
     subjectId: subject.value,
-    teil: teil.value,
-    title: title.value
+    teil: teil.value
   });
+  if (title.value) {
+  params.set("title", title.value);
+}
 
   window.location.href = `exam.html?${params.toString()}`;
 };
@@ -273,8 +275,8 @@ class="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded transitio
 <p id="accessError"
 class="text-sm text-red-600 mt-2 text-center"></p>
     <script>
-const ACCESS_KEY = "WAY_ACCESS_OK";
-const EXCEL_URL = "https://mcq-app.github.io/WAY/pass.xlsx";
+// const ACCESS_KEY = "WAY_ACCESS_OK";
+// const EXCEL_URL = "https://mcq-app.github.io/WAY/pass.xlsx";
 
 function hideAccessUI(){
   document.getElementById("accessCodeInput")?.classList.add("hidden");
