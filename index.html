@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Deutsch mit Ibrahim</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+/* ================= Firebase ================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXRcM3jlAEyMMCqqXcOALCzbXVFoiopzA",
+  authDomain: "deutsch-mit-ibrahim-35ee6.firebaseapp.com",
+  projectId: "deutsch-mit-ibrahim-35ee6",
+  storageBucket: "deutsch-mit-ibrahim-35ee6.firebasestorage.app",
+  messagingSenderId: "906444610272",
+  appId: "1:906444610272:web:963fbc60739b0c80034e85",
+  measurementId: "G-W8KZPKXV6T"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ================= Load Subjects ================= */
+
+async function loadSubjects() {
+  const subjectSelect = document.getElementById("subject");
+  subjectSelect.innerHTML = '<option value="">Modul auswählen</option>';
+
+  const snapshot = await getDocs(collection(db, "subjects"));
+
+  snapshot.forEach(doc => {
+    const option = document.createElement("option");
+    option.value = doc.id;
+    option.textContent = doc.id;
+    subjectSelect.appendChild(option);
+  });
+}
+
+/* ================= Load Teils ================= */
+
+async function loadTeils(subjectId) {
+  const teilSelect = document.getElementById("teil");
+  teilSelect.innerHTML = '<option value="">Teil auswählen</option>';
+  teilSelect.disabled = true;
+
+  const snapshot = await getDocs(
+    collection(db, "subjects", subjectId, "teils")
+  );
+
+  snapshot.forEach(doc => {
+    const option = document.createElement("option");
+    option.value = doc.id;
+    option.textContent = doc.id;
+    teilSelect.appendChild(option);
+  });
+
+  if (!snapshot.empty) teilSelect.disabled = false;
+}
+
+/* ================= Load Titles ================= */
+
+async function loadTitles(subjectId, teilId) {
+  const titleSelect = document.getElementById("title");
+  titleSelect.innerHTML = '<option value="">Text auswählen</option>';
+  titleSelect.disabled = true;
+
+  const snapshot = await getDocs(
+    collection(db, "subjects", subjectId, "teils", teilId, "titles")
+  );
+
+  snapshot.forEach(doc => {
+    const option = document.createElement("option");
+    option.value = doc.id;
+    option.textContent = doc.id;
+    titleSelect.appendChild(option);
+  });
+
+  if (!snapshot.empty) titleSelect.disabled = false;
+}
+
+/* ================= Authentication ================= */
+
+onAuthStateChanged(auth, user => {
+  authLoading.classList.add("hidden");
+
+  if (user) {
+    loginView.classList.add("hidden");
+    selectView.classList.remove("hidden");
+    loadSubjects();
+  } else {
+    loginView.classList.remove("hidden");
+    selectView.classList.add("hidden");
+  }
+});
+
+loginBtn.onclick = async () => {
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+/* ================= Events ================= */
+
+subject.addEventListener("change", e => {
+  if (e.target.value) loadTeils(e.target.value);
+});
+
+teil.addEventListener("change", e => {
+  if (e.target.value) loadTitles(subject.value, e.target.value);
+});
+
+startBtn.onclick = () => {
+  if (!subject.value || !teil.value || !title.value) {
+    alert("Bitte wählen Sie Modul, Teil und Text aus");
+    return;
+  }
+
+  const params = new URLSearchParams({
+    subjectId: subject.value,
+    teil: teil.value,
+    title: title.value
+  });
+
+  window.location.href = `exam.html?${params.toString()}`;
+};
+</script>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center px-4">
+
+<div class="w-full max-w-md">
+
+<!-- ===== HEADER ===== -->
+<div class="text-center mb-8">
+  <h1 class="text-3xl font-extrabold text-blue-700">
+    Deutsch mit Ibrahim
+  </h1>
+  <p class="text-gray-600 mt-2">
+    Lernen • Üben • Erfolgreich sein
+  </p>
+</div>
+
+<!-- ===== LOADING ===== -->
+<div id="authLoading"
+class="bg-white p-6 rounded-xl shadow text-center">
+  <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
+  <p class="mt-4 text-gray-600">Authentifizierung...</p>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginView"
+class="bg-white p-6 rounded-xl shadow hidden">
+
+  <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+    Login
+  </h2>
+
+  <input id="email" type="email" placeholder="E-Mail"
+  class="w-full border p-2 mb-3 rounded focus:outline-none focus:ring focus:ring-blue-200">
+
+  <input id="password" type="password" placeholder="Passwort"
+  class="w-full border p-2 mb-4 rounded focus:outline-none focus:ring focus:ring-blue-200">
+
+  <button id="loginBtn"
+  class="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded mb-3 transition">
+    Login
+  </button>
+
+  <a href="https://t.me/DeutschmitIbrahimbot" target="_blank"
+  class="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white p-2 rounded transition">
+    Telegram‑Bot öffnen
+  </a>
+</div>
+
+<!-- ===== SELECT EXAM ===== -->
+<div id="selectView"
+class="bg-white p-6 rounded-xl shadow hidden">
+
+  <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+    Prüfung auswählen
+  </h2>
+
+  <select id="subject" class="w-full border p-2 mb-3 rounded">
+    <option value="">Modul</option>
+  </select>
+
+  <select id="teil" class="w-full border p-2 mb-3 rounded" disabled>
+    <option value="">Teil</option>
+  </select>
+
+  <select id="title" class="w-full border p-2 mb-4 rounded" disabled>
+    <option value="">Text</option>
+  </select>
+
+  <button id="startBtn"
+  class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition">
+    Prüfung starten
+  </button>
+</div>
+
+</div>
+</body>
+</html>
