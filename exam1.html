@@ -218,6 +218,21 @@ let reviewMode = false;
 
  // ====== نظام الملاحظات ======
 const noteBtn = document.getElementById("noteBtn");
+ const doubleCheckBtn = document.getElementById("doubleCheckBtn");
+
+doubleCheckBtn.onclick = () => {
+  reviewMode = !reviewMode;
+
+  // تغيير شكل الزر
+  if (reviewMode) {
+    doubleCheckBtn.classList.add("bg-green-100");
+  } else {
+    doubleCheckBtn.classList.remove("bg-green-100");
+  }
+
+  // إعادة رسم السؤال
+  renderQuestion();
+};
 const notePopup = document.getElementById("notePopup");
 const noteText = document.getElementById("noteText");
 
@@ -462,16 +477,6 @@ else location.href="index.html";
 
 /* ================= SHOW ANSWER ================= */
 showAnswerBtn.onclick = () => {
- const doubleCheckBtn = document.getElementById("doubleCheckBtn");
-
-doubleCheckBtn.onclick = () => {
-  reviewMode = !reviewMode;
-
-  if (reviewMode) {
-    doubleCheckBtn.classList.add("bg-green-100");
-  } else {
-    doubleCheckBtn.classList.remove("bg-green-100");
-  }
 
   renderQuestion();
 };
