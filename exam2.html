@@ -199,7 +199,8 @@ const firebaseConfig = {
   appId: "1:413229693800:web:80bbb23e09cb83da4ff4dd",
   measurementId: "G-J5T5V39L3Q"
 });
-
+ 
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
