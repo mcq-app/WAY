@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Deutsch mit Ibrahim</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center px-4">
+
+<div class="w-full max-w-3xl">
+
+<!-- ===== HEADER ===== -->
+<div class="text-center mb-6">
+<h1 class="text-3xl font-extrabold text-blue-700">
+ Deutsch mit Ibrahim
+</h1>
+<p class="text-gray-600 mt-1 text-sm">
+ B1 prüfung
+</p>
+</div>
+
+<div class="bg-white rounded-xl shadow-lg p-6">
+
+<!-- ================= LOADING ================= -->
+<div id="loading" class="text-center py-20">
+<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+<p class="mt-4 text-gray-600">جاري التحميل...</p>
+</div>
+
+<!-- ================= CONTENT ================= -->
+<div id="examContent" class="hidden">
+
+<!-- ================= EXAM INFO ================= -->
+<div class="mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-sm">
+    
+    <!-- Main Exam Title -->
+    <div class="flex-1">
+      <h2 class="text-xl font-bold text-blue-800 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Prüfung
+      </h2>
+      <p id="examInfo" class="text-gray-700 font-medium mt-1"></p>
+    </div>
+    
+    <!-- Info Badges -->
+    <div class="flex flex-wrap gap-2">
+      <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
+        <div class="text-xs text-gray-500 font-medium">Module</div>
+        <div id="subjectBadge" class="text-sm font-semibold text-blue-700"></div>
+      </div>
+      
+      <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
+        <div class="text-xs text-gray-500 font-medium">Teil</div>
+        <div id="teilBadge" class="text-sm font-semibold text-blue-700"></div>
+      </div>
+      
+      <div class="bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-xs">
+        <div class="text-xs text-gray-500 font-medium">Text</div>
+        <div id="titleBadge"  class="text-sm font-semibold text-blue-700 break-words"></div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Progress -->
+<div class="mb-6">
+<div class="flex justify-between text-xs text-gray-500 mb-1">
+<span id="questionCounter">—</span>
+<span id="progressPercent">—</span>
+</div>
+
+<div id="progressWrapper" class="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+  <!-- الشريط الأساسي (الخلفية الرمادية) -->
+  <div class="absolute inset-0 rounded-full"></div>
+  
+  <!-- شريط التقدم المتحرك -->
+  <div id="progressBar" class="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-200" style="width: 0%;"></div>
+  
+  <!-- الدائرة المتحركة - مرتبطة بنهاية الشريط الأزرق -->
+  <div id="progressHandle" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-600 rounded-full shadow-lg cursor-grab z-10" style="left: -8px;"></div>
+</div>
+
+<p class="text-xs text-gray-400 mt-2 text-center">
+ اسحب الدائرة للتنقل بين الاسئلة
+</p>
+</div>
+
+<!-- Question -->
+<div class="mb-6">
+<h3 id="questionTitle"
+class="text-lg font-semibold text-gray-700 mb-2"></h3>
+
+<p id="questionText"
+class="text-gray-800 leading-relaxed"></p>
+</div>
+
+<!-- Options -->
+<div id="options" class="space-y-3 mb-6"></div>
+
+<!-- Explanation -->
+<div id="explanationBox"
+class="hidden p-4 rounded-lg border border-blue-300
+bg-blue-50 text-blue-900 text-sm leading-relaxed mb-6">
+</div>
+ 
+<div id="notePopup"
+class="hidden mt-4 p-3 rounded-lg border border-gray-400 bg-white">
+
+<textarea id="noteText"
+class="w-full h-24 p-2 border rounded resize-none focus:outline-none"
+placeholder="اكتب ملاحظتك هنا..."></textarea>
+
+</div>
+<!-- Navigation -->
+<div class="flex justify-center items-center gap-2">
+
+<button id="prevBtn"
+class="px-4 py-2 rounded-lg bg-gray-200
+ text-gray-700 hover:bg-gray-300 transition">
+ ⬅️
+</button>
+
+<div class="flex gap-2">
+<div class="flex gap-2">
+<button id="showAnswerBtn"
+class="w-9 h-9 flex items-center justify-center
+ rounded-full border border-blue-500
+ text-blue-600 hover:bg-blue-50 transition">
+ ✅
+</button>
+
+<button id="explainBtn"
+class="w-9 h-9 flex items-center justify-center
+ rounded-full border border-gray-400
+ text-gray-600 hover:bg-gray-100 transition">
+ ℹ
+</button>
+
+<button id="noteBtn"
+class="w-9 h-9 flex items-center justify-center
+ rounded-full border border-gray-400
+ text-gray-500 hover:bg-yellow-50 transition"
+title="إضافة ملاحظة">
+ 📝
+</button>
+</div>
+
+<button id="nextBtn"
+class="px-4 py-2 rounded-lg bg-blue-600
+ text-white hover:bg-blue-700 transition">
+ ➡️
+</button>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, query,orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ================= PARAMS ================= */
+const params = new URLSearchParams(location.search);
+const subjectId = params.get("subjectId");
+const teil = params.get("teil");
+const title = params.get("title");
+
+// ================= EXAM INFO =================
+// تحديث معلومات الاختبار
+function updateExamInfo() {
+  
+  // تحديث الباجات الجديدة
+  document.getElementById('subjectBadge').textContent = subjectId;
+  document.getElementById('teilBadge').textContent = teil;
+  document.getElementById('titleBadge').textContent = title;
+  
+  // إضافة tooltip للنص الطويل
+  document.getElementById('titleBadge').title = title;
+}
+
+// استدعاء الدالة بعد تعيين القيم
+updateExamInfo();
+ 
+/* ================= FIREBASE ================= */
+const app = initializeApp({
+apiKey: "AIzaSyAXRcM3jlAEyMMCqqXcOALCzbXVFoiopzA",
+authDomain: "deutsch-mit-ibrahim-35ee6.firebaseapp.com",
+projectId: "deutsch-mit-ibrahim-35ee6",
+storageBucket: "deutsch-mit-ibrahim-35ee6.firebasestorage.app",
+messagingSenderId: "906444610272",
+appId: "1:906444610272:web:963fbc60739b0c80034e85",
+measurementId: "G-W8KZPKXV6T"
+});
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+/* ================= STATE ================= */
+let questions = [];
+let index = 0;
+
+ // ====== نظام الملاحظات ======
+const noteBtn = document.getElementById("noteBtn");
+const notePopup = document.getElementById("notePopup");
+const noteText = document.getElementById("noteText");
+
+// معرف السؤال الحالي للملاحظة
+let currentNoteQuestionId = null;
+ function getNoteKey() {
+  // نربط الملاحظة بالسؤال الحالي وبالمادة والجزء
+  return `note_${subjectId}_${teil}_${index}`;
+}
+ 
+/* ================= LOAD ================= */
+async function loadQuestions() {
+  questions = [];
+
+  // ✅ إذا كان هناك title → حمّل أسئلته فقط
+  if (title) {
+    const ref = collection(
+      db,
+      "subjects",
+      subjectId,
+      "teils",
+      teil,
+      "titles",
+      title,
+      "questions"
+    );
+
+    const q = query(ref, orderBy("order", "asc"));
+    const snap = await getDocs(q);
+
+    snap.forEach(d => {
+      questions.push({
+        ...d.data(),
+        answer:
+          typeof d.data().correctIndex === "number"
+            ? d.data().correctIndex
+            : -1
+      });
+    });
+
+  } 
+  // ✅ إذا لم يوجد title → حمّل كل الـ titles ثم كل الأسئلة
+  else {
+    const titlesRef = collection(
+      db,
+      "subjects",
+      subjectId,
+      "teils",
+      teil,
+      "titles"
+    );
+
+    const titlesSnap = await getDocs(titlesRef);
+
+    for (const titleDoc of titlesSnap.docs) {
+      const qRef = collection(
+        db,
+        "subjects",
+        subjectId,
+        "teils",
+        teil,
+        "titles",
+        titleDoc.id,
+        "questions"
+      );
+
+      const q = query(qRef, orderBy("order", "asc"));
+      const qSnap = await getDocs(q);
+
+      qSnap.forEach(d => {
+        questions.push({
+          ...d.data(),
+          answer:
+            typeof d.data().correctIndex === "number"
+              ? d.data().correctIndex
+              : -1
+        });
+      });
+    }
+  }
+
+  // حماية إضافية
+  if (!questions.length) {
+    alert("لا توجد أسئلة");
+    location.href = "index.html";
+    return;
+  }
+
+  questions.sort((a, b) => a.order - b.order);
+
+  renderQuestion();
+  loading.classList.add("hidden");
+  examContent.classList.remove("hidden");
+}
+
+function loadNoteForCurrent() {
+  const key = getNoteKey();
+  const saved = localStorage.getItem(key);
+
+  noteText.value = saved || "";
+
+  // تحديث لون الزر حسب وجود ملاحظة
+  if (noteText.value.trim() !== "") {
+    noteBtn.classList.add("border-yellow-500", "text-yellow-600");
+  } else {
+    noteBtn.classList.remove("border-yellow-500", "text-yellow-600");
+  }
+
+  // أغلق النافذة دائمًا عند الانتقال لسؤال جديد
+  notePopup.classList.add("hidden");
+}
+noteText.addEventListener("input", () => {
+  const key = getNoteKey();
+  localStorage.setItem(key, noteText.value);
+
+  // تحديث لون الأيقونة مباشرة
+  if (noteText.value.trim() !== "") {
+    noteBtn.classList.add("border-yellow-500", "text-yellow-600");
+  } else {
+    noteBtn.classList.remove("border-yellow-500", "text-yellow-600");
+  }
+});
+noteBtn.onclick = () => {
+  notePopup.classList.toggle("hidden");
+};
+document.addEventListener("click", (e) => {
+  if (
+    !notePopup.contains(e.target) &&
+    e.target !== noteBtn &&
+    !noteBtn.contains(e.target)
+  ) {
+    notePopup.classList.add("hidden");
+  }
+});
+
+/* ================= RENDER ================= */
+function renderQuestion() {
+explanationBox.classList.add("hidden");
+loadNoteForCurrent();
+ 
+const q = questions[index];
+const total = questions.length;
+const current = index + 1;
+const percent = Math.round((current / total) * 100);
+
+questionCounter.textContent = `Frage ${current} von ${total}`;
+progressPercent.innerText = `${percent}%`;
+progressBar.style.width = `${percent}%`;
+progressHandle.style.left = `calc(${percent}% - 8px)`;
+
+  questionTitle.innerText = `Frage ${current}`;
+  questionText.innerText = q.text;
+
+options.innerHTML = "";
+q.options.forEach((opt,i)=>{
+const l=document.createElement("label");
+l.className="block border p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition";
+l.innerText=opt;
+l.onclick=()=>{
+options.querySelectorAll("label")
+ .forEach(x=>x.classList.add("opacity-50"));
+if(i===q.answer) l.classList.add("bg-green-100","border-green-500");
+else{
+l.classList.add("bg-red-100","border-red-500");
+options.children[q.answer]
+ .classList.add("bg-green-100","border-green-500");
+ }
+ };
+options.appendChild(l);
+ });
+}
+
+/* ================= NAV ================= */
+nextBtn.onclick=()=>{if(index<questions.length-1)index++,renderQuestion();}
+prevBtn.onclick=()=>{if(index>0)index--,renderQuestion();}
+
+/* ================= EXPLANATION ================= */
+explainBtn.onclick=()=>{
+explanationBox.innerText =
+questions[index].explanation || "Geen uitleg beschikbaar.";
+explanationBox.classList.toggle("hidden");
+};
+
+/* ================= DRAG ================= */
+let dragging=false;
+
+function seek(x){
+const r=progressWrapper.getBoundingClientRect();
+let ratio=(x-r.left)/r.width;
+ratio=Math.max(0,Math.min(1,ratio));
+index=Math.min(questions.length-1,Math.floor(ratio*questions.length));
+renderQuestion();
+}
+
+progressHandle.addEventListener("mousedown",e=>{
+dragging=true;
+progressHandle.classList.add("cursor-grabbing");
+e.preventDefault();
+});
+document.addEventListener("mousemove",e=>{
+if(dragging)seek(e.clientX);
+});
+document.addEventListener("mouseup",()=>{
+dragging=false;
+progressHandle.classList.remove("cursor-grabbing");
+});
+
+progressHandle.addEventListener("touchstart",()=>dragging=true);
+document.addEventListener("touchmove",e=>{
+if(dragging)seek(e.touches[0].clientX);
+});
+document.addEventListener("touchend",()=>dragging=false);
+
+/* ================= AUTH ================= */
+onAuthStateChanged(auth,user=>{
+if(user) loadQuestions();
+else location.href="index.html";
+});
+
+/* ================= SHOW ANSWER ================= */
+showAnswerBtn.onclick = () => {
+const q = questions[index];
+if (q.answer === -1) {
+alert("Er is geen oplossing voor deze vraag");
+return;
+ }
+document.querySelectorAll("#options label").forEach((l, i) => {
+l.classList.add("opacity-50");
+if (i === q.answer) {
+l.classList.add("bg-green-100", "border-green-500");
+ }
+ });
+};
+</script>
+
+</body>
+</html>
