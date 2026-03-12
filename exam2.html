@@ -241,13 +241,15 @@ async function loadQuestions() {
     const snap = await getDocs(q);
 
     snap.forEach(d => {
-      questions.push({
-        ...d.data(),
-        answer:
-          typeof d.data().correctIndex === "number"
-            ? d.data().correctIndex
-            : -1
-      });
+    const data = d.data();
+
+questions.push({
+  text: data.text,
+  options: data.options,
+  explanation: data.explanation,
+  order: data.order,
+  answer: typeof data.correctIndex === "number" ? data.correctIndex : -1
+});
     });
 
   } 
@@ -280,13 +282,15 @@ async function loadQuestions() {
       const qSnap = await getDocs(q);
 
       qSnap.forEach(d => {
-        questions.push({
-          ...d.data(),
-          answer:
-            typeof d.data().correctIndex === "number"
-              ? d.data().correctIndex
-              : -1
-        });
+   const data = d.data();
+
+questions.push({
+  text: data.text,
+  options: data.options,
+  explanation: data.explanation,
+  order: data.order,
+  answer: typeof data.correctIndex === "number" ? data.correctIndex : -1
+});
       });
     }
   }
