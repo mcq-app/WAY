@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>موقعي</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    h1 { color: #222; }
+    .user {
+      background: white;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>👥 المستخدمون:</h1>
+  <div id="users">⏳ جاري التحميل...</div>
+
+  <script type="module">
+    // استيراد مكتبات Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    // إعدادات Firebase (اللي نسختها من Firebase Console)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDL5zwwqOcAyVQlly3_TMDh1AxChPgsBhw",
+      authDomain: "app1-ef383.firebaseapp.com",
+      projectId: "app1-ef383",
+      storageBucket: "app1-ef383.firebasestorage.app",
+      messagingSenderId: "1052933635869",
+      appId: "1:1052933635869:web:cc3950c3368944d195ebf4",
+      measurementId: "G-B9JDFGVK01"
+    };
+
+    // تشغيل Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // جيب البيانات من collection اسمها "users"
+    const usersDiv = document.getElementById("users");
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      usersDiv.innerHTML = "";
+
+      if (querySnapshot.empty) {
+        usersDiv.innerHTML = "لا يوجد بيانات.";
+      } else {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          usersDiv.innerHTML += `<div class="user">👤 ${data.name ?? "بدون اسم"}</div>`;
+        });
+      }
+    } catch (error) {
+      usersDiv.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
+    }
+  </script>
+</body>
+</html>
